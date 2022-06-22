@@ -1,2 +1,4 @@
 # go-squashfuse
-NOT affiliated with the original C project &lt;github.com/vasi/squashfuse>. go-squashfuse intends to be the Go version of it, making mounting SquashFS files easy.
+TODO:
+ - [ ] Read files without copying their entire contents into memory (VERY IMPORTANT)
+ - [ ] Add support for pure go by adding <github.com/CalebQ42/squashfs>
