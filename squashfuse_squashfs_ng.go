@@ -11,6 +11,7 @@ import (
 	"syscall"
 	"io/ioutil"
 	"sync"
+	//"os"
 )
 
 type SquashFS struct {
@@ -45,17 +46,6 @@ func Open(fname string) (*SquashFS, error) {
 	return s, err
 }
 
-/*func (s *SquashFS) Open(path string) (*File, error) {
-	fi, err := squashfs.Open(path, s.sqfs)
-	fmt.Println(err)
-	if err != nil { return &File{}, err }
-	f := &File{
-		file: fi,
-	}
-
-	return f, nil
-}*/
-
 // TODO: Figure out how to read data without copying into RAM
 func (f *File) Open(ctx context.Context, flags uint32) (fs.FileHandle, uint32, syscall.Errno) {
 	f.mu.Lock()
@@ -73,7 +63,9 @@ func (f *File) Open(ctx context.Context, flags uint32) (fs.FileHandle, uint32, s
 	f2, _ := squashfs.Open(target, f.SquashFS.sqfs)
 	defer f2.Close()
 
-	f.Data, err = ioutil.ReadAll(f2)
+	if f.Data == nil {
+		f.Data, err = ioutil.ReadAll(f2)
+	}
 
 	return err, fuse.FOPEN_KEEP_CACHE, 0
 }
@@ -95,3 +87,4 @@ func (f *File) Read(ctx context.Context, fh fs.FileHandle, dest []byte, off int6
 
 	return fuse.ReadResultData(f.Data[off:end]), 0
 }
+
